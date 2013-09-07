@@ -130,7 +130,6 @@ list<int> processQuery(map<string, list<int> >postingslists, vector<string> word
 		if(postingslists.find(wordsinquery[0])!=postingslists.end()){
 			return postingslists[wordsinquery[0]];
 		}else{
-			cout<<"No entries found to match your query"<<endl;
 			return list<int>();
 		}
 	}else{
@@ -158,20 +157,26 @@ int main(){
 	ifstream inputfile;
 	map<string, int> docids;
 	map<int, string> reversedocids;
-
+	string temp;
 	getNamesOfInputfiles(docids,reversedocids);
 	map<string, list<int> > postingslists=readInAllFiles(inputfile, docids);
-	vector<string> wordsinquery=requestQuery();
-	list<int> processed=processQuery(postingslists, wordsinquery);
-	vector<string> filesfound;
-	for(list<int>::iterator itr=processed.begin(); itr!=processed.end(); ++itr){
-		filesfound.push_back(reversedocids[*itr]);
+	while(true){
+		vector<string> wordsinquery=requestQuery();
+		list<int> processed=processQuery(postingslists, wordsinquery);
+		vector<string> filesfound;
+		for(list<int>::iterator itr=processed.begin(); itr!=processed.end(); ++itr){
+			filesfound.push_back(reversedocids[*itr]);
+		}
+		if(filesfound.size()!=0){
+			cout<<"Documents matching your query:"<<endl;
+		}else{
+			cout<<"No documents found matching your query."<<endl;
+		}
+		printVector(filesfound);
+		cout<<endl;
+		cout<<"Do you wish to search another query with the given files? Enter 'Yes' for the affirmative."<<endl;
+		getline(cin,temp);
+		if (temp!="Yes") break;
 	}
-	if(filesfound.size()!=0){
-		cout<<"Documents matching your query:"<<endl;
-	}else{
-		cout<<"No documents found matching your query."<<endl;
-	}
-	printVector(filesfound);
 	return 0;
 }
